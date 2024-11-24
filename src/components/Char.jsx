@@ -1,7 +1,10 @@
-const Char = ({ status, letter, wordIndex, letterIndex }) => {
-    return <span className={`${status != "default" && (status == "correct" ? "text-green-500" : "text-red-500")}`}>
+import Cursor from "./Cursor";
+
+const Char = ({ status, letter, index, isActiveChar }) => {
+    return <span className={`relative ${status != "default" && (status == "correct" ? "text-correctKey" : "text-incorrectKey")}`}>
         {letter}
     </span>
+
 }
 
 export default Char;
