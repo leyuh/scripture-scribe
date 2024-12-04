@@ -14,9 +14,12 @@ function App() {
   const [isScramble, setIsScramble] = useState(false);
 
   const [showCompletion, setShowCompletion] = useState(false);
+  const [showReferenceInput, setShowReferenceInput] = useState(false);
 
   const [start, setStart] = useState(false);
   const [time, setTime] = useState(0);
+
+  const refRef = useRef();
 
   const isValid = (key) => {
     let code = key.charCodeAt(0);
@@ -30,9 +33,10 @@ function App() {
   }
 
   const handleKeyPress = (e) => {
+    if (document.activeElement === refRef.current && showReferenceInput) return;
     let key = e.key;
 
-    if (key == "Shift") return;
+    if (key == "Shift" || key == "Enter") return;
 
     if (!start && !showCompletion) setStart(true);
  
@@ -120,12 +124,44 @@ function App() {
     return "default";
   }
 
+  const handleRefSubmit = async (e) => {
+    e.preventDefault();
 
-  //useEffect(() => { console.log(keysInput) }, [keysInput])
+    let input = e.target.ref.value;
+
+    let res = await fetch(`https://bible-api.com/${input.toLowerCase()}`)
+      .then(res => res.json());
+
+    e.target.ref.blur();
+
+    if (res.error) return;
+
+    let text = res.text.split("").map(char => (char.charCodeAt(0) == 8217 || char.charCodeAt(0) == 8216) ? "'" : (char.charCodeAt(0) == 8220 || char.charCodeAt(0) == 8221) ? '"' : char == "\n" ? " " : char).join("");
+    text = text.split("").filter((char, i) => ((i == 0 || i == text.length - 1) && char != " ") || (i != 0 && i != text.length - 1)).join("");
+
+    setStart(false);
+    setTime(0);
+    setKeysInput("");
+    setActiveKeyIndex(0);
+
+    setOgText(res.text);
+    setTextData(text);
+    setReference(res.reference);
+
+  }
 
   return (
     <div id="app">
-      <div className="bg-secondary mx-auto mt-[20vh] rounded-md text-zinc-100 px-4 py-2 flex gap-4 w-min">
+      <h1 className="text-zinc-100 text-3xl text-center mt-4 tracking-wide">&lt;scripture scribe/&gt;</h1>
+      <div className="bg-secondary mx-auto mt-[15vh] max-w-md rounded-md text-zinc-100 px-4 py-2 flex gap-4 justify-start">
+        <button
+          className={`${showReferenceInput ? "border-2 border-zinc-100" : ""} px-2 py-1 rounded-sm hover:bg-zinc-100 hover:text-primary transition-all`}
+          onClick={() => setShowReferenceInput(prev => !prev)}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
+          </svg>
+        </button>
         <button
           className={`${!isScramble ? "border-2 border-zinc-100" : ""} px-2 py-1 rounded-sm hover:bg-zinc-100 hover:text-primary transition-all`}
           onClick={() => setIsScramble(false)}
@@ -134,6 +170,15 @@ function App() {
           className={`${isScramble ? "border-2 border-zinc-100" : ""} px-2 py-1 rounded-sm hover:bg-zinc-100 hover:text-primary transition-all`}
           onClick={() => setIsScramble(true)}
         >Scramble</button>
+
+        {showReferenceInput && <form onSubmit={handleRefSubmit}>
+          <input
+            ref={refRef}
+            name="ref"
+            className="px-2 py-1 rounded-sm text-zinc-100 border-2 outline-none border-zinc-100 transition-all bg-transparent"
+            placeholder="John 3:16"
+          />
+        </form>}
       </div>
 
       <div className="bg-secondary relative mx-auto max-w-5xl p-12 mt-20 text-zinc-100 font-semibold text-3xl rounded-md">
