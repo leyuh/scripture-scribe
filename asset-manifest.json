@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/scripture-scribe/static/css/main.8906f889.css",
-    "main.js": "/scripture-scribe/static/js/main.161a7f14.js",
+    "main.css": "/scripture-scribe/static/css/main.4fade6bf.css",
+    "main.js": "/scripture-scribe/static/js/main.69eba32e.js",
     "index.html": "/scripture-scribe/index.html",
-    "main.8906f889.css.map": "/scripture-scribe/static/css/main.8906f889.css.map",
-    "main.161a7f14.js.map": "/scripture-scribe/static/js/main.161a7f14.js.map"
+    "main.4fade6bf.css.map": "/scripture-scribe/static/css/main.4fade6bf.css.map",
+    "main.69eba32e.js.map": "/scripture-scribe/static/js/main.69eba32e.js.map"
   },
   "entrypoints": [
-    "static/css/main.8906f889.css",
-    "static/js/main.161a7f14.js"
+    "static/css/main.4fade6bf.css",
+    "static/js/main.69eba32e.js"
   ]
 }
